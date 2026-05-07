@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>JACOMET Grind Guide</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#52A8D2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Grind Guide">
+<link rel="apple-touch-icon" href="grind-icon-192.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root{
+  --ice:#52A8D2;--ice-dark:#2c7fa8;--ice-light:#EBF5FB;
+  --navy:#1a3a5c;--lgrey:#F2F4F7;--mgrey:#8496A9;
+  --border:#D0DAE6;--white:#ffffff;--text:#1a1a2e;
+  --sg-bg:#E2EFDA;--sg-fg:#375623;
+  --g-bg:#FFF2CC;--g-fg:#7B5800;
+  --u-bg:#FCE4D6;--u-fg:#712B13;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--lgrey);color:var(--text);min-height:100vh;max-width:480px;margin:0 auto}
+
+.home-hero{background:var(--ice);padding:32px 24px 40px;text-align:center}
+.home-hero .logo{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.18em;color:rgba(255,255,255,0.5);margin-bottom:14px;text-transform:uppercase}
+.home-hero h2{font-size:28px;font-weight:300;color:white;line-height:1.2;margin-bottom:6px}
+.home-hero h2 span{font-weight:600}
+.home-hero p{font-size:13px;color:rgba(255,255,255,0.6);margin-top:8px}
+.accent-bar{height:3px;background:linear-gradient(90deg,#2c7fa8,#a8dff5)}
+
+.content{padding:20px;flex:1}
+
+.sect{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--mgrey);margin-bottom:10px;margin-top:24px}
+.sect:first-child{margin-top:0}
+
+.chips{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.chip{background:white;border:2px solid var(--border);border-radius:14px;padding:14px 16px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:space-between}
+.chip:active{transform:scale(0.99)}
+.chip-info .chip-name{font-size:14px;font-weight:600;color:var(--navy)}
+.chip-info .chip-sub{font-size:12px;color:var(--mgrey);margin-top:2px;font-family:'DM Mono',monospace}
+.chip-arrow{font-size:18px;color:var(--mgrey)}
+.chip.sel-ice{border-color:var(--ice);background:var(--ice-light)}
+.chip.sel-ice .chip-name{color:var(--ice-dark)}
+.chip.sel-amber{border-color:#BA7517;background:#FEF9EE}
+.chip.sel-amber .chip-name{color:#854F0B}
+.chip.sel-coral{border-color:#D85A30;background:#FEF0EB}
+.chip.sel-coral .chip-name{color:#993C1D}
+
+.result-area{margin-top:4px}
+
+.phase-card{background:white;border-radius:14px;padding:16px;margin-bottom:10px}
+.phase-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.phase-nr{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;flex-shrink:0}
+.ph-1{background:var(--lgrey);color:var(--navy)}
+.ph-2{background:#EBF5FB;color:var(--ice-dark)}
+.ph-3{background:#E2EFDA;color:#375623}
+.phase-title{font-size:14px;font-weight:600;color:var(--navy)}
+.phase-sub{font-size:11px;color:var(--mgrey);font-family:'DM Mono',monospace}
+
+.param-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.param{background:var(--lgrey);border-radius:10px;padding:10px 12px}
+.param-label{font-size:10px;color:var(--mgrey);font-family:'DM Mono',monospace;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px}
+.param-val{font-size:20px;font-weight:600;color:var(--navy)}
+.param-val span{font-size:12px;font-weight:400;color:var(--mgrey)}
+.param-full{grid-column:1/-1}
+.param-note{background:var(--lgrey);border-radius:10px;padding:10px 12px;margin-top:8px;font-size:12px;color:var(--mgrey)}
+
+.goal-box{background:var(--ice-light);border-radius:10px;padding:10px 12px;margin-top:10px}
+.goal-text{font-size:13px;color:var(--ice-dark);font-weight:500}
+.warn-box{background:#FCE4D6;border-radius:10px;padding:10px 12px;margin-top:8px}
+.warn-text{font-size:12px;color:#712B13;font-weight:500}
+
+.faust-card{background:white;border-radius:14px;padding:16px;margin-bottom:10px}
+.faust-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--lgrey);font-size:13px;color:var(--text)}
+.faust-row:last-child{border-bottom:none;padding-bottom:0}
+.faust-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+
+.tab-row{display:flex;gap:8px;margin-bottom:0}
+.tab{flex:1;background:white;border:1.5px solid var(--border);border-radius:12px;padding:12px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;color:var(--mgrey);transition:all 0.15s}
+.tab.active{background:var(--ice);color:white;border-color:var(--ice)}
+
+.bem-card{background:white;border-radius:14px;padding:16px;margin-bottom:10px}
+.bem-card select{width:100%;margin-bottom:10px;border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--navy);outline:none;-webkit-appearance:none;background:white}
+.bem-card select:focus{border-color:var(--ice)}
+.notiz-area{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--navy);resize:none;outline:none;min-height:80px;transition:border-color 0.15s}
+.notiz-area:focus{border-color:var(--ice)}
+.notiz-area::placeholder{color:var(--mgrey)}
+.save-btn{width:100%;background:var(--ice);color:white;border:none;border-radius:12px;padding:16px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:10px;transition:all 0.15s}
+.save-btn:active{transform:scale(0.98);background:var(--ice-dark)}
+
+.hist-item{background:white;border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px}
+.hi-badge{font-size:11px;padding:3px 8px;border-radius:6px;font-weight:600;white-space:nowrap;flex-shrink:0;background:var(--ice-light);color:var(--ice-dark)}
+.hi-body{flex:1}
+.hi-text{font-size:13px;color:var(--text);line-height:1.4}
+.hi-date{font-size:11px;color:var(--mgrey);margin-top:3px;font-family:'DM Mono',monospace}
+.del-btn{background:none;border:none;color:var(--mgrey);font-size:20px;cursor:pointer;padding:0 2px;flex-shrink:0}
+.empty{text-align:center;padding:40px 20px;color:var(--mgrey);font-size:14px}
+
+.pb{padding-bottom:20px}
+</style>
+</head>
+<body>
+
+<div class="home-hero">
+  <div class="logo">JACOMET SKI SYSTEM</div>
+  <h2>Grind <span>Guide</span></h2>
+  <p>Reichmann Steinschleifmaschine</p>
+</div>
+<div class="accent-bar"></div>
+
+<div class="content pb">
+  <div class="tab-row" style="margin-top:20px;margin-bottom:20px">
+    <div class="tab active" id="tab-prog" onclick="showTab('prog')">Programm</div>
+    <div class="tab" id="tab-bem" onclick="showTab('bem')">Bemerkungen</div>
+  </div>
+
+  <!-- PROGRAMM -->
+  <div id="view-prog">
+    <div class="sect">Symmetrische Programme</div>
+    <div class="chips" id="sym-chips">
+      <div class="chip" data-id="kalt" onclick="selChip(this,'sym','sel-ice')">
+        <div class="chip-info"><div class="chip-name">❄️  Kalt</div><div class="chip-sub">unter −8 °C · Pulverschnee</div></div>
+        <div class="chip-arrow">›</div>
+      </div>
+      <div class="chip" data-id="uni" onclick="selChip(this,'sym','sel-ice')">
+        <div class="chip-info"><div class="chip-name">🌡  Universell</div><div class="chip-sub">−8 °C bis 0 °C · gemischt</div></div>
+        <div class="chip-arrow">›</div>
+      </div>
+      <div class="chip" data-id="sulz" onclick="selChip(this,'sym','sel-ice')">
+        <div class="chip-info"><div class="chip-name">💧  Sulzschnee</div><div class="chip-sub">über 0 °C · nasser Frühjahrsschnee</div></div>
+        <div class="chip-arrow">›</div>
+      </div>
+    </div>
+
+    <div class="sect">Richtungsstrukturen</div>
+    <div class="chips" id="richt-chips">
+      <div class="chip" data-id="leicht" onclick="selChip(this,'richt','sel-amber')">
+        <div class="chip-info"><div class="chip-name">Leicht</div><div class="chip-sub">0 °C bis −3 °C · leicht feucht</div></div>
+        <div class="chip-arrow">›</div>
+      </div>
+      <div class="chip" data-id="mittel" onclick="selChip(this,'richt','sel-amber')">
+        <div class="chip-info"><div class="chip-name">Mittel</div><div class="chip-sub">0 °C bis +2 °C · nass-feucht</div></div>
+        <div class="chip-arrow">›</div>
+      </div>
+      <div class="chip" data-id="stark" onclick="selChip(this,'richt','sel-coral')">
+        <div class="chip-info"><div class="chip-name">Stark</div><div class="chip-sub">über +2 °C · Sulz / Frühjahr</div></div>
+        <div class="chip-arrow">›</div>
+      </div>
+    </div>
+
+    <div id="result-area"></div>
+
+    <div class="sect">Faustregeln</div>
+    <div class="faust-card">
+      <div class="faust-row"><span class="faust-icon">🔼</span><span>Wärmer &amp; nasser → gröber schleifen, DZ runter, VS rauf</span></div>
+      <div class="faust-row"><span class="faust-icon">🔽</span><span>Kälter &amp; trockener → feiner schleifen, DZ hoch, VS runter</span></div>
+      <div class="faust-row"><span class="faust-icon">↔️</span><span>Abrichter symmetrisch für gleichmässige Struktur</span></div>
+      <div class="faust-row"><span class="faust-icon">⚠️</span><span>Richtungsstruktur Stark → vorher Testabschnitt schleifen</span></div>
+      <div class="faust-row"><span class="faust-icon">1️⃣</span><span>Vorschliff immer zuerst — Belag plan und sauber vorbereiten</span></div>
+    </div>
+  </div>
+
+  <!-- BEMERKUNGEN -->
+  <div id="view-bem" style="display:none">
+    <div class="sect">Neue Bemerkung</div>
+    <div class="bem-card">
+      <select id="bem-prog">
+        <option value="">Programm wählen…</option>
+        <option>Kalt</option>
+        <option>Universell</option>
+        <option>Sulzschnee</option>
+        <option>Richtung Leicht</option>
+        <option>Richtung Mittel</option>
+        <option>Richtung Stark</option>
+      </select>
+      <select id="bem-ski" style="margin-bottom:10px;width:100%;border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--navy);outline:none;-webkit-appearance:none;background:white">
+        <option value="">Ski (optional)…</option>
+        <option>dai! 173</option>
+        <option>sibla! 173</option>
+        <option>dai! 164 Race</option>
+      </select>
+      <textarea class="notiz-area" id="bem-text" placeholder="Eigene Erfahrungswerte, Anpassungen, Beobachtungen…"></textarea>
+      <button class="save-btn" onclick="saveBem()">Bemerkung speichern</button>
+    </div>
+    <div class="sect">Gespeicherte Bemerkungen</div>
+    <div id="hist-list"></div>
+  </div>
+</div>
+
+<script>
+const DATA={
+  kalt:{label:'Kalt',
+    vor:{stufe:'4–5',dz:'7–8',vs:'6'},
+    plan:{stufe:'5',dz:'7',vs:'6',note:'Gleiche Körnung wie Vorschliff, DZ minimal runter'},
+    struk:{dz:'6–7',vs:'6'},
+    ziel:'Feine, flache, enge Struktur — maximale Kontaktfläche'
+  },
+  uni:{label:'Universell',
+    vor:{stufe:'6–7',dz:'5–6',vs:'7–8'},
+    plan:{stufe:'6',dz:'5',vs:'7',note:'Mittlere Körnung, DZ stabil halten'},
+    struk:{dz:'5',vs:'7–8'},
+    ziel:'Mittelfeine, symmetrische Allrounder-Struktur'
+  },
+  sulz:{label:'Sulzschnee',
+    vor:{stufe:'8–9',dz:'4–5',vs:'8–9'},
+    plan:{stufe:'8',dz:'4',vs:'8',note:'Grobe Körnung, VS hoch halten'},
+    struk:{dz:'3–4',vs:'8–9'},
+    ziel:'Grobe, tiefe, offene Struktur — optimale Wasserableitung'
+  },
+  leicht:{label:'Richtung Leicht',isRicht:true,
+    abrichter:'L: 6 / R: 7',differenz:'1 Stufe',
+    vor:{stufe:'—',dz:'5–6',vs:'6–7'},
+    plan:{stufe:'—',dz:'5–6',vs:'6',note:'Symmetrisch schleifen vor Richtungsschliff'},
+    struk:{dz:'5–6',vs:'6–7'},
+    ziel:'Kaum sichtbar, aber messbar. Gut für erste Tests.'
+  },
+  mittel:{label:'Richtung Mittel',isRicht:true,
+    abrichter:'L: 5 / R: 7',differenz:'2 Stufen',
+    vor:{stufe:'—',dz:'4–5',vs:'7–8'},
+    plan:{stufe:'—',dz:'4–5',vs:'7',note:'Symmetrisch schleifen vor Richtungsschliff'},
+    struk:{dz:'4–5',vs:'7–8'},
+    ziel:'Deutliche V-Charakteristik. Für Geradeauspassagen geeignet.'
+  },
+  stark:{label:'Richtung Stark',isRicht:true,warn:true,
+    abrichter:'L: 5 / R: 8–9',differenz:'3–4 Stufen',
+    vor:{stufe:'—',dz:'3–4',vs:'8–9'},
+    plan:{stufe:'—',dz:'3–4',vs:'8',note:'Symmetrisch schleifen vor Richtungsschliff'},
+    struk:{dz:'3–4',vs:'8–9'},
+    ziel:'Nur bei sehr nassem Schnee / Sulz.'
+  }
+};
+
+function selChip(el,group,cls){
+  document.querySelectorAll('#sym-chips .chip,#richt-chips .chip').forEach(c=>{
+    c.className='chip';
+    c.querySelector('.chip-arrow').textContent='›';
+  });
+  el.className='chip '+cls;
+  el.querySelector('.chip-arrow').textContent='↓';
+  render(DATA[el.dataset.id]);
+}
+
+function render(d){
+  const r=document.getElementById('result-area');
+  const stufeRow=(s)=>s&&s!=='—'?`<div class="param"><div class="param-label">Stufe</div><div class="param-val">${s}<span> / 10</span></div></div>`:'';
+  const richtRow=d.isRicht?`
+    <div class="param"><div class="param-label">Abrichter</div><div class="param-val" style="font-size:15px">${d.abrichter}</div></div>
+    <div class="param"><div class="param-label">Differenz</div><div class="param-val" style="font-size:15px">${d.differenz}</div></div>`:'';
+
+  r.innerHTML=`
+  <div style="margin-top:16px">
+    <div class="phase-card">
+      <div class="phase-header">
+        <div class="phase-nr ph-1">1</div>
+        <div><div class="phase-title">Vorschliff</div><div class="phase-sub">Belag plan und sauber vorbereiten</div></div>
+      </div>
+      <div class="param-grid">
+        ${stufeRow(d.vor.stufe)}
+        <div class="param"><div class="param-label">Drehzahl (DZ)</div><div class="param-val">${d.vor.dz}<span> /10</span></div></div>
+        <div class="param"><div class="param-label">Vorschub (VS)</div><div class="param-val">${d.vor.vs}<span> /10</span></div></div>
+        ${d.isRicht?`<div class="param param-full"><div class="param-label">Abrichter</div><div class="param-val" style="font-size:15px">Symmetrisch</div></div>`:''}
+      </div>
+    </div>
+
+    <div class="phase-card">
+      <div class="phase-header">
+        <div class="phase-nr ph-2">2</div>
+        <div><div class="phase-title">Planschliff</div><div class="phase-sub">Übergang zum Strukturschliff</div></div>
+      </div>
+      <div class="param-grid">
+        ${stufeRow(d.plan.stufe)}
+        <div class="param"><div class="param-label">Drehzahl (DZ)</div><div class="param-val">${d.plan.dz}<span> /10</span></div></div>
+        <div class="param"><div class="param-label">Vorschub (VS)</div><div class="param-val">${d.plan.vs}<span> /10</span></div></div>
+      </div>
+      <div class="param-note">💡 ${d.plan.note}</div>
+    </div>
+
+    <div class="phase-card">
+      <div class="phase-header">
+        <div class="phase-nr ph-3">3</div>
+        <div><div class="phase-title">Strukturschliff</div><div class="phase-sub">Finaler Schliff</div></div>
+      </div>
+      <div class="param-grid">
+        <div class="param"><div class="param-label">Drehzahl (DZ)</div><div class="param-val">${d.struk.dz}<span> /10</span></div></div>
+        <div class="param"><div class="param-label">Vorschub (VS)</div><div class="param-val">${d.struk.vs}<span> /10</span></div></div>
+        ${richtRow}
+      </div>
+      <div class="goal-box"><div class="goal-text">🎯 ${d.ziel}</div></div>
+      ${d.warn?`<div class="warn-box"><div class="warn-text">⚠️ Vorher Testabschnitt schleifen!</div></div>`:''}
+    </div>
+  </div>`;
+  r.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function showTab(t){
+  document.getElementById('view-prog').style.display=t==='prog'?'':'none';
+  document.getElementById('view-bem').style.display=t==='bem'?'':'none';
+  document.getElementById('tab-prog').className='tab'+(t==='prog'?' active':'');
+  document.getElementById('tab-bem').className='tab'+(t==='bem'?' active':'');
+  if(t==='bem')renderHist();
+}
+
+function load(){try{return JSON.parse(localStorage.getItem('jacomet_grind')||'[]')}catch{return[]}}
+function saveBem(){
+  const prog=document.getElementById('bem-prog').value;
+  const ski=document.getElementById('bem-ski').value;
+  const text=document.getElementById('bem-text').value.trim();
+  if(!prog||!text)return;
+  const items=load();
+  items.unshift({prog,ski,text,date:new Date().toLocaleDateString('de-CH')});
+  try{localStorage.setItem('jacomet_grind',JSON.stringify(items.slice(0,100)))}catch{}
+  document.getElementById('bem-text').value='';
+  document.getElementById('bem-prog').value='';
+  document.getElementById('bem-ski').value='';
+  renderHist();
+}
+function renderHist(){
+  const items=load();
+  const el=document.getElementById('hist-list');
+  if(!items.length){el.innerHTML='<div class="empty">Noch keine Bemerkungen gespeichert.</div>';return}
+  el.innerHTML=items.map((it,i)=>`
+    <div class="hist-item">
+      <span class="hi-badge">${it.prog}</span>
+      <div class="hi-body">
+        ${it.ski?`<div style="font-size:11px;color:var(--ice-dark);font-weight:600;margin-bottom:3px">🎿 ${it.ski}</div>`:''}
+        <div class="hi-text">${it.text}</div>
+        <div class="hi-date">${it.date}</div>
+      </div>
+      <button class="del-btn" onclick="delBem(${i})" aria-label="Löschen">🗑</button>
+    </div>`).join('');
+}
+function delBem(i){const items=load();items.splice(i,1);try{localStorage.setItem('jacomet_grind',JSON.stringify(items))}catch{}renderHist()}
+renderHist();
+</script>
+</body>
+</html>
